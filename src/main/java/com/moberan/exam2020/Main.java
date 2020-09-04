@@ -1,7 +1,11 @@
 package com.moberan.exam2020;
 
-import com.moberan.exam2020.lib.Task;
 import com.moberan.exam2020.lib.TestLibrary;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class Main {
 
@@ -11,19 +15,22 @@ public class Main {
 	}
 
 	private static String tasks(){
-
 		TestLibrary lib = new TestLibrary();
 
-		final String[] result = new String[1];
+		CompletableFuture<String> futureTask = new CompletableFuture<>();
+		lib.firstTask(futureTask::complete);
 
-		lib.firstTask(new Task() {
-			@Override
-			public void taskCallback(String s) {
-				 result[0] = lib.secondTask(s);
-			}
-		});
+		String first = null;
+		try {
+			first = futureTask.get(2, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (TimeoutException e) {
+			e.printStackTrace();
+		}
 
-		// FIXME always null.
-		return result[0];
+		return lib.secondTask(first);
 	}
 }
