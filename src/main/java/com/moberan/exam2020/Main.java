@@ -9,6 +9,8 @@ import java.util.concurrent.TimeoutException;
 
 public class Main {
 
+	private static final long WAIT_TIME = 3000L;
+
 	public static void main(String[] args) {
 		String result = tasks();
 		System.out.println(result);
@@ -17,12 +19,13 @@ public class Main {
 	private static String tasks(){
 		TestLibrary lib = new TestLibrary();
 
+		// keyword : java future
 		CompletableFuture<String> futureTask = new CompletableFuture<>();
 		lib.firstTask(futureTask::complete);
 
 		String first = null;
 		try {
-			first = futureTask.get(2, TimeUnit.SECONDS);
+			first = futureTask.get(WAIT_TIME, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
